@@ -1,7 +1,7 @@
 #![no_main]
 #![no_std]
 
-use panic_semihosting as _;
+use panic_halt as _;
 use rtfm::cyccnt::U32Ext;
 use stm32f3xx_hal::gpio::*;
 use stm32f3xx_hal::hal::digital::v2::*;
@@ -12,17 +12,43 @@ const ON_TIME: u32 = 1_000_000;
 const OFF_TIME: u32 = 2_000_000;
 const DEBOUNCE_DELAY: u32 = 160_000;
 
-fn init_leds(gpioe: stm32::GPIOE, ahb: &mut AHB) -> [gpioe::PEx<Output<PushPull>>; 2] {
+fn init_leds(gpioe: stm32::GPIOE, ahb: &mut AHB) -> [gpioe::PEx<Output<PushPull>>; 8] {
     let mut gpioe = gpioe.split(ahb);
-    let pe9 = gpioe
-        .pe9
-        .into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper)
-        .downgrade();
-    let pe10 = gpioe
-        .pe10
-        .into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper)
-        .downgrade();
-    let leds = [pe9, pe10];
+
+    let leds = [
+        gpioe
+            .pe9
+            .into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper)
+            .downgrade(),
+        gpioe
+            .pe10
+            .into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper)
+            .downgrade(),
+        gpioe
+            .pe11
+            .into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper)
+            .downgrade(),
+        gpioe
+            .pe12
+            .into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper)
+            .downgrade(),
+        gpioe
+            .pe13
+            .into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper)
+            .downgrade(),
+        gpioe
+            .pe14
+            .into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper)
+            .downgrade(),
+        gpioe
+            .pe15
+            .into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper)
+            .downgrade(),
+        gpioe
+            .pe8
+            .into_push_pull_output(&mut gpioe.moder, &mut gpioe.otyper)
+            .downgrade(),
+    ];
     leds
 }
 
@@ -35,7 +61,7 @@ const APP: () = {
         led_state: bool,
         #[init(false)]
         btn_pressed: bool,
-        leds: [gpioe::PEx<Output<PushPull>>; 2],
+        leds: [gpioe::PEx<Output<PushPull>>; 8],
         button: gpioa::PA0<Input<PullDown>>,
         exti: stm32::EXTI,
     }
