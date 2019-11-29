@@ -1,0 +1,31 @@
+[package]
+authors = ["Cristian Eigel <cristian.eigel@icloud.com>"]
+edition = "2018"
+readme = "README.md"
+name = "rtfm-leds"
+version = "0.1.0"
+
+[dependencies]
+cortex-m = "0.6.0"
+cortex-m-rtfm = "0.5.0"
+cortex-m-semihosting = "0.3.3"
+panic-semihosting = "0.5.3"
+heapless = "0.5.1"
+
+[dependencies.stm32f3xx-hal]
+features = ["stm32f303xc", "rt"]
+version = "0.3.0"
+
+[patch.crates-io]
+stm32f3xx-hal = {git = "https://github.com/stm32-rs/stm32f3xx-hal.git"}
+
+# this lets you use `cargo fix`!
+[[bin]]
+name = "rtfm-leds"
+test = false
+bench = false
+
+[profile.release]
+codegen-units = 1 # better optimizations
+debug = true # symbols are nice and they don't increase the size on Flash
+lto = true # better optimizations
