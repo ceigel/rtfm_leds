@@ -13,8 +13,8 @@ use stm32f3xx_hal::stm32;
 use stm32f3xx_hal::time::*;
 use stm32f3xx_hal::{flash::*, rcc::*};
 
-const ON_TIME: Duration = Duration::from_millis(500);
-const OFF_TIME: Duration = Duration::from_millis(500);
+const ON_TIME: Duration = Duration::from_millis(250);
+const OFF_TIME: Duration = Duration::from_millis(250);
 const HOLD_TIME: Duration = Duration::from_millis(1000);
 const DOUBLE_CLICK_TIME: Duration = Duration::from_millis(700);
 const FLASH_TIME: Duration = Duration::from_millis(300);
@@ -121,7 +121,14 @@ const APP: () = {
         ctx.core.DWT.enable_cycle_counter();
         let mut flash = ctx.device.FLASH.constrain();
         let mut rcc = ctx.device.RCC.constrain();
-        let clocks = rcc.cfgr.freeze(&mut flash.acr);
+        let clocks = rcc
+            .cfgr
+            .use_hse(MegaHertz(8))
+            .sysclk(MegaHertz(64))
+            .pclk1(MegaHertz(32))
+            .pclk2(MegaHertz(64))
+            .hclk(MegaHertz(64))
+            .freeze(&mut flash.acr);
         let time_computer = CyclesComputer::new(clocks.sysclk());
 
         let mut gpioa = ctx.device.GPIOA.split(&mut rcc.ahb);
