@@ -6,6 +6,6 @@ break DefaultHandler
 break HardFault
 tb main
 # monitor arm semihosting enable
-monitor tpiu config internal itm.txt uart off 8000000
+monitor tpiu config internal itm.txt uart off 64000000
 monitor itm port 0 on
 continue

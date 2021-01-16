@@ -6,7 +6,7 @@ pub use cortex_m::iprintln;
 use cortex_m::peripheral::ITM;
 use heapless::mpmc::Q8;
 use panic_halt as _;
-use rtfm::cyccnt::{Instant, U32Ext};
+use rtic::cyccnt::{Instant, U32Ext};
 use stm32f3xx_hal::gpio::*;
 use stm32f3xx_hal::hal::digital::v2::*;
 use stm32f3xx_hal::stm32;
@@ -75,7 +75,7 @@ impl CyclesComputer {
         CyclesComputer { frequency }
     }
 
-    pub fn to_cycles(&self, duration: Duration) -> rtfm::cyccnt::Duration {
+    pub fn to_cycles(&self, duration: Duration) -> rtic::cyccnt::Duration {
         let s_part = (duration.as_secs() as u32) * self.frequency.0;
         let mms_part = (duration.subsec_micros() / 1000) * (self.frequency.0 / 1000);
         (s_part + mms_part).cycles()
@@ -94,7 +94,7 @@ fn compute_next(current_led: usize, increment: bool, max: usize) -> usize {
     }
 }
 
-#[rtfm::app(device = stm32f3xx_hal::stm32, monotonic = rtfm::cyccnt::CYCCNT, peripherals = true)]
+#[rtic::app(device = stm32f3xx_hal::stm32, monotonic = rtic::cyccnt::CYCCNT, peripherals = true)]
 const APP: () = {
     struct Resources {
         #[init(0)]
